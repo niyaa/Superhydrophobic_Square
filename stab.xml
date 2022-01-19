@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<NEKTAR xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.nektar.info/schema/nektar.xsd">
+
+   <EXPANSIONS>
+        <E COMPOSITE="C[32]" NUMMODES="6" TYPE="MODIFIED" FIELDS="u,v,w" />
+  </EXPANSIONS>
+  
+  <CONDITIONS>
+    <SOLVERINFO>
+      <I PROPERTY="SolverType"        VALUE="CoupledLinearisedNS"/>
+      <I PROPERTY="EQTYPE"            VALUE="SteadyLinearisedNS" />
+      <I PROPERTY="EvolutionOperator" VALUE="Direct"             />
+      <I PROPERTY="HOMOGENEOUS"				VALUE="1D"/>
+      <I PROPERTY="ModeType"          VALUE="SingleMode"         />
+      <I PROPERTY="Projection"        VALUE="Galerkin"           />
+      <I PROPERTY="Driver"            VALUE="Arpack"    />
+      <I PROPERTY="ArpackProblemType" VALUE="LargestImag"    />
+      <I PROPERTY="GlobalSysSoln"			VALUE="DirectStaticCond"/>
+      <!--I PROPERTY="USEFFT" VALUE="FFTW" /-->
+    </SOLVERINFO>
+    
+    <PARAMETERS>
+      <P> IO_CheckSteps = 1000   </P>
+      <P> IO_InfoSteps  = 500    </P>
+      <P> Re            = 60  </P>
+      <P> Kinvis        = 1.0/Re </P>
+      <P> kdim          = 64     </P>
+      <P> evtol         = 1e-6   </P>
+      <P> nvec          = 8      </P>
+      <P> nits          = 5000      </P>
+      <P> HomModesZ     = 2      </P>
+      <P> LZ            = 17.4   </P>
+      <P> realShift     = 0   </P>
+      <P> imagShift     = 0  </P>
+    </PARAMETERS>
+    
+    <VARIABLES>
+      <V ID="0"> u </V>
+      <V ID="1"> v </V>
+      <V ID="2"> w </V>
+    </VARIABLES>
+    
+        <BOUNDARYREGIONS>
+            <B ID="0"> C[27] </B>  <!-- Inlet -->
+            <B ID="1"> C[28] </B>  <!-- Outlet -->
+            <B ID="2"> C[29] </B>  <!-- Wall -->
+            <B ID="3"> C[30] </B>  <!-- Wall -->
+        </BOUNDARYREGIONS>
+
+          <BOUNDARYCONDITIONS>
+            <REGION REF="0">
+                <D VAR="u" VALUE="0" />
+                <D VAR="v" VALUE="0" />
+                <D VAR="w" VALUE="0" />
+            </REGION>
+           <REGION REF="1">
+                <D VAR="u" VALUE="0" />
+                <D VAR="v" VALUE="0" />
+                <D VAR="w" VALUE="0.3" />
+            </REGION>
+
+            <REGION REF="2">
+                <P VAR="u" VALUE="[3]" />
+                <P VAR="v" VALUE="[3]" />
+                <P VAR="w" VALUE="[3]" />
+            </REGION>
+            <REGION REF="3">
+                <P VAR="u" VALUE="[2]" />
+                <P VAR="v" VALUE="[2]" />
+                <P VAR="w" VALUE="[2]" />
+            </REGION>
+        </BOUNDARYCONDITIONS>
+    
+    <FUNCTION NAME="AdvectionVelocity">
+	<F VAR="u,v,w" FILE="geom.bse"/>
+    </FUNCTION>
+  </CONDITIONS>
+  
+  <FORCING>
+    <FORCE TYPE="StabilityCoupledLNS">
+    </FORCE>
+  </FORCING>  
+  
+</NEKTAR>
